@@ -95,10 +95,12 @@ def plot_pval_animation(industry):
     plot =  px.scatter(industry_pval_dict[industry], 'Ticker' , 'price'  , color = 'p_val' ,
              color_continuous_scale=[(0.00, "red"),   (0.05, "red"),(0.33, "blue"), (1.00, "blue")],
              size = 'p_val' , 
+             range_color=[0.0, 1.0],
              animation_frame = 'Date',
              range_x = [start_dt,end_dt], size_max=50,
              range_y = [industry_pval_dict[industry]['price'].min()-50,industry_pval_dict[industry]['price'].max()+50],
-             hover_data= {"price":True, "p_val_cumsum":False,"p_val":False}, width=800, height=500)
+             hover_data= {"price":True, "p_val_cumsum":False,"p_val":False}, width=800, height=500,
+             title = "P-Value plots for stocks of "+industry+" industry")
     
     return plot
 
