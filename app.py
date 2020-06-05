@@ -92,7 +92,7 @@ def plot_pval_animation(industry):
     assert(isinstance(industry,str))
     
     
-    plot =  px.scatter(industry_pval_dict[industry], 'Ticker' , 'price'  , color = 'p_val' ,
+    plot =  px.scatter(industry_pval_dict[industry], 'Ticker' , 'price'  , color = industry_pval_dict[industry].p_val/np.max(industry_pval_dict[industry].p_val) ,
              color_continuous_scale=[(0.00, "red"),   (0.05, "red"),(0.33, "blue"), (1.00, "blue")],
              size = 'p_val' , 
              range_color=[0.0, 1.0],
@@ -105,7 +105,23 @@ def plot_pval_animation(industry):
     return plot
 
 def predict_and_plot(symbol):
-#     try:
+    '''
+    Given the industry
+    of the market, trains
+    a spline on the data
+    from China and selects
+    a random ticker from
+    the selected industry
+    and predicts the plot
+    for that ticker based
+    on the spread of COVID
+    on that day and
+    the stock value on
+    previous day.
+    
+    '''
+    assert(isinstance(symbol,str))
+    
     tick = random.choices(industry_pval_dict[symbol].Ticker.unique())[0]
     joined_table[["Confirmed",symbol]]
 
@@ -130,7 +146,7 @@ def predict_and_plot(symbol):
 
     test_confirmed_cases = concat_test_data.Confirmed.to_numpy()
     test_confirmed_cases = test_scaler1.fit_transform(test_confirmed_cases[:-2].reshape(-1,1))
-    test_stock_price = concat_test_data.price.to_numpy()
+    test_stock_price = concat_test_data.price.shift(-1).to_numpy()
     test_stock_price = test_scaler2.fit_transform(test_stock_price[:-2].reshape(-1,1))
 
     spline = SmoothBivariateSpline(x1,x2,y,s=5)
@@ -139,15 +155,21 @@ def predict_and_plot(symbol):
     for i,x in enumerate(test_confirmed_cases):
         # If first iteration, take the actual stock price
         # Else take the predicted value from previous iteration
-        if(i==0):
-            prediction.append(spline(test_confirmed_cases[i],test_stock_price[i]))
-        else:
-            prediction.append(spline(test_confirmed_cases[i],prediction[i-1]))
+        prediction.append(spline(test_confirmed_cases[i],test_stock_price[i]))
+            
+    fig = go.Figure()
 
     predicted_y = test_scaler2.inverse_transform(np.array(prediction).reshape(-1,1))
-
+    
     result = np.hstack((np.array(concat_test_data.price.to_list()[1:-1]).reshape(41,1),predicted_y))
-    fig = px.line(result,width=800,height=500,title="Plotting predicted vs actual values of "+tick)
+    
+    df = pd.DataFrame(result,
+                      columns=["Actual","Predicted"],
+                     index = concat_test_data.index.strftime('%m/%d').to_list()[1:-1])
+    
+    fig = px.line(df,width=800,height=500,
+                  range_x = [start_dt,end_dt],
+                  title="Predicted vs actual values of the stock "+tick)
         
     return fig
 
@@ -161,8 +183,6 @@ def str_to_datetime_index(data):
 try:
     confirmed_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
     us_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
-    deaths_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
-    recovered_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv'
     
     print('Fetching confirmed data from git...')
     time_series_confirmed = drop_null_vals(pd.read_csv(confirmed_url,error_bad_lines=False))
@@ -176,23 +196,10 @@ try:
     
     us_time_series_confirmed.to_csv('data/time_series_covid_19_confirmed_us.csv')
     
-    print('Fetching deaths data from git...')
-    time_series_deaths = drop_null_vals(pd.read_csv(deaths_url,error_bad_lines=False))
-    time_series_deaths.to_csv('data/time_series_covid_19_deaths.csv')
-    print('Fetched deaths data from git')
-    
-    print('Fetching recovered data from git...')
-    time_series_recovered = drop_null_vals(pd.read_csv(recovered_url,error_bad_lines=False))
-    time_series_recovered.to_csv('data/time_series_covid_19_recovered.csv')
-    print('Fetched recovered data from git')
-    
 except:
     # data not able to be fetched from git, fetching from local system
     print("Data not able to fetch from git. Using local filesystem.")
     time_series_confirmed = drop_null_vals(pd.read_csv('data/time_series_covid_19_confirmed.csv'))
-    time_series_deaths = drop_null_vals(pd.read_csv('data/time_series_covid_19_deaths.csv'))
-    time_series_recovered = drop_null_vals(pd.read_csv('data/time_series_covid_19_recovered.csv'))
-    
     
     
 # Step 1. Launch the application
@@ -248,9 +255,6 @@ prediction_plot = go.Figure(data=predict_and_plot("Airlines"))
 
 
 app.layout = dbc.Container([
-#     dbc("Hello Bootstrap!", color="success"),
-#     className="p-5",
-                # a header and a paragraph
     html.Main(role="main",children = [
         
         # Code for top-panel
@@ -289,7 +293,6 @@ app.layout = dbc.Container([
                                           html.P(className="lead",children="The outbreak in US took place in mid February. From March onwards, the cases expanded exponentially.")
                                                ]),
                                   html.Div(className="col-md-8",
-#                                       style = {"left":"45px"},
                                       children = [
                                           html.Iframe(id = 'World',
                                                       srcDoc=open('outputs/html/growth_america.html','r').read(),
@@ -333,6 +336,7 @@ app.layout = dbc.Container([
                                  children=[
                                      html.Div(className="col-md-10",
                                          children=[
+                                             html.Br(),
                                              html.H2([
                                                  "Analyzing correlation of stocks with COVID",
                                                  html.Span([" (p-value analysis)"],className="text-muted")
@@ -386,10 +390,53 @@ app.layout = dbc.Container([
                                         ]),dcc.Graph(id="prediction_plot", figure=prediction_plot)
                                     ],className = "row")
                                 ])
-                     ])
+                     ]),
+        
+                    html.Footer(className="pt-4 my-md-5 pt-md-5 border-top",
+                       children=[
+                           html.Div(className="row",
+                               children=[
+                                   html.Div(className="col-6 col-md"),
+                                   html.Div(className="col-12 col-md",
+                                       children=[
+                                           html.Small(className="d-block mb-3 text-muted",
+                                                 children=[
+                                                     "ECE 229 Spring 2020"
+                                                 ])
+                                       ]),
+                                   html.Div(className="col-6 col-md",
+                                       children=[
+                                           html.H5("Group 3 Members"),
+                                           html.Ul(className="list-unstyled text-small",
+                                              children=[
+                                                  html.Li("Aditi Tyagi"),
+                                                  html.Li("Chang Zhou"),
+                                                  html.Li("Shangzhe Zhang"),
+                                                  html.Li("Yuance Li"),
+                                                  html.Li("Yue Yang"),
+                                                  html.Li("Yashdeep Singh"),
+                                              ])
+                                       ]),
+                                   html.Div(className="col-6 col-md",
+                                        children=[
+                                            html.H5("Resources"),
+                                            html.Ul(className="list-unstyled text-small"),
+                                            html.Li(html.A(className="text-muted",
+                                                           href="https://github.com/y1singh/ECE-229-Group-3",
+                                                           target="_blank",
+                                                          children=["GitHub"])),
+                                            html.Li(html.A(className="text-muted",
+                                                           href="https://coronavirus.jhu.edu/us-map",
+                                                           target="_blank",
+                                                          children=["John Hopkins University COVID Website"])),
+                                            html.Li(html.A(className="text-muted",
+                                                           href="#top",
+                                                          children=["Back to top"])),
+                                        ]),
+                               ])
+                       ])
             ])
         ])
-
 
 @app.callback(Output('stock_plot', 'figure'),
              [Input('stock_opt', 'value')])
@@ -417,4 +464,4 @@ def update_prediction_figure(industry):
   
 # Step 6. Add the server clause
 if __name__ == '__main__':
-    app.run_server(debug = False)
+    app.run_server(debug = False,host="0.0.0.0")
