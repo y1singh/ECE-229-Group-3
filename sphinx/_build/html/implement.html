@@ -377,29 +377,55 @@ timeseries data in data/china_stocks_timeseries.csv.</p>
 <dl class="function">
 <dt id="industry_visualization">
 <code class="sig-name descname">industry_visualization</code><span class="sig-paren">(</span><em class="sig-param">dict_industries</em><span class="sig-paren">)</span><a class="headerlink" href="#industry_visualization" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function generates a panel servable app to plot holoview time series analysis of stock market prices within different industries.
-:param dict dict_industries: Dictionary of dataframes that contains stock market prices with each key value as the industry type.
-:return: Panel app which updates the plot based on menu selection.
-:rtype: panel.Column</p>
+<dd><p>The function generates a panel servable app to plot holoview time series analysis of stock market prices within different industries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dict_industries</strong> (<em>dict</em>) – Dictionary of dataframes that contains stock market prices with each key value as the industry type.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Panel app which updates the plot based on menu selection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>panel.Column</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="calc_pval">
 <code class="sig-name descname">calc_pval</code><span class="sig-paren">(</span><em class="sig-param">industries</em>, <em class="sig-param">industy_pval_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#calc_pval" title="Permalink to this definition">¶</a></dt>
-<dd><p>The function generates a plotly scatter animation plot with bubble size representing the p value to compare the correlation of stock prices with confirmed cases over time.
-:param list industries: List of unique keys of the the industries dictionary for drop down selection.
-:param dict industy_pval_dict: Dictionary of stock prices and p values with keys are industry types.
-:return: Panel app which updates the plotly plot based on menu selection and provides p value animation.
-:rtype: matplotlib.pyplot.figure.show()</p>
+<dd><p>The function generates a plotly scatter animation plot with bubble size representing the p value to compare the correlation of stock prices with confirmed cases over time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>industries</strong> (<em>list</em>) – List of unique keys of the the industries dictionary for drop down selection.</p></li>
+<li><p><strong>industy_pval_dict</strong> (<em>dict</em>) – Dictionary of stock prices and p values with keys are industry types.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Panel app which updates the plotly plot based on menu selection and provides p value animation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.pyplot.figure.show()</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt>
 <code class="sig-name descname">predict_and_plot</code><span class="sig-paren">(</span><em class="sig-param">industries</em><span class="sig-paren">)</span></dt>
-<dd><p>The function trains a spline regression model based on the China Industries data and predicts the stock prices for US industries.
-:param list industries: List of china industries to train the model on.
-:return: Panel app which updates the matplotlib plot based on menu selection and provides stock prices prediction plot.
-:rtype: matplotlib.pyplot.figure.show()</p>
+<dd><p>The function trains a spline regression model based on the China Industries data and predicts the stock prices for US industries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>industries</strong> (<em>list</em>) – List of china industries to train the model on.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Panel app which updates the matplotlib plot based on menu selection and provides stock prices prediction plot.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matplotlib.pyplot.figure.show()</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

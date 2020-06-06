@@ -136,6 +136,7 @@ generate_output.ipynb
 .. py:function:: industry_visualization(dict_industries)
 
     The function generates a panel servable app to plot holoview time series analysis of stock market prices within different industries. 
+
     :param dict dict_industries: Dictionary of dataframes that contains stock market prices with each key value as the industry type.
     :return: Panel app which updates the plot based on menu selection. 
     :rtype: panel.Column
@@ -143,6 +144,7 @@ generate_output.ipynb
 .. py:function:: calc_pval(industries, industy_pval_dict)
 
     The function generates a plotly scatter animation plot with bubble size representing the p value to compare the correlation of stock prices with confirmed cases over time. 
+    
     :param list industries: List of unique keys of the the industries dictionary for drop down selection. 
     :param dict industy_pval_dict: Dictionary of stock prices and p values with keys are industry types. 
     :return: Panel app which updates the plotly plot based on menu selection and provides p value animation. 
@@ -151,6 +153,7 @@ generate_output.ipynb
 .. py:function:: predict_and_plot(industries)
 
     The function trains a spline regression model based on the China Industries data and predicts the stock prices for US industries. 
+
     :param list industries: List of china industries to train the model on. 
     :return: Panel app which updates the matplotlib plot based on menu selection and provides stock prices prediction plot. 
     :rtype: matplotlib.pyplot.figure.show()
