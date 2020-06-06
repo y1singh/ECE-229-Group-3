@@ -25,9 +25,6 @@ This project provides insights to the prospective investors on which areas of in
 •	Stock prices prediction model using spline regression. 
 
 
-Contents
---------------------------------------------------------
-
 .. toctree::
    :maxdepth: 3
    :caption: Contents
