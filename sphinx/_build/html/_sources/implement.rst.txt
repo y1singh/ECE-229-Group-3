@@ -1,6 +1,10 @@
 Function Descriptions
 ========================
 
+.. toctree::
+   :maxdepth: 3
+   :caption: Contents
+
 app.py
 ------------------------
 
@@ -144,7 +148,7 @@ generate_output.ipynb
 .. py:function:: calc_pval(industries, industy_pval_dict)
 
     The function generates a plotly scatter animation plot with bubble size representing the p value to compare the correlation of stock prices with confirmed cases over time. 
-    
+
     :param list industries: List of unique keys of the the industries dictionary for drop down selection. 
     :param dict industy_pval_dict: Dictionary of stock prices and p values with keys are industry types. 
     :return: Panel app which updates the plotly plot based on menu selection and provides p value animation. 
