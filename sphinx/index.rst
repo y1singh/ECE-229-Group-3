@@ -25,7 +25,6 @@ Contents
    :maxdepth: 3
    :glob:
 
-   funcdes
    implement
 
 About us
