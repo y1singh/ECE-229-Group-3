@@ -6,6 +6,12 @@
 Economic Impacts of COVID-19
 ========================================================
 
+*ECE 229 Project - Group 3*
+
+`Access`_ *our project*
+
+.. _access: http://52.12.171.211:8050/
+
 Overview of Economic Impact of Coronavirus
 --------------------------------------------------------
 
@@ -17,6 +23,7 @@ This project provides insights to the prospective investors on which areas of in
 •	Industry wise analysis of stock prices using holoviews plot. 
 •	P-value visualization to understand the correlation of confirmed coronavirus cases with stock prices in different industries using Plotly animation. 
 •	Stock prices prediction model using spline regression. 
+
 
 Contents
 --------------------------------------------------------
