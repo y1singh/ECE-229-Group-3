@@ -1,10 +1,4 @@
 from generate_output import *
-# from generate_output import drop_null_vals, covid_spread_animation, industry_visualization, str_to_datetime_index, predict_and_plot
-# import pandas as pd
-# import panel as pn
-# import plotly as py
-# import pickle
-# import numpy as np
 
 def test_func():
     ######################################################################
@@ -15,15 +9,21 @@ def test_func():
     cols_to_check = dropped.columns
     a = dropped[cols_to_check].isnull().apply(lambda x: all(x), axis=1)
     b = dropped[cols_to_check].isnull().apply(lambda x: all(x), axis=0)
+    a_rows = drop_null_vals(df,'rows')[cols_to_check].isnull().apply(lambda x: all(x), axis=0)
+    a_cols = drop_null_vals(df,'columns')[cols_to_check].isnull().apply(lambda x: all(x), axis=1)
     assert isinstance(dropped, pd.DataFrame)
-    assert not(a.any() or b.any())
+    assert not(a.any() or b.any() or a_rows.any() or a_cols.any())
 
     ######################################################################
     # check covid_spread_animation
     us_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
     us_time_series_confirmed = drop_null_vals(pd.read_csv(us_confirmed_url,error_bad_lines=False))
     us_time_series_confirmed = us_time_series_confirmed.rename(columns={'Province_State': 'Province/State', 'Country_Region': 'Country/Region', 'Long_': 'Long'})
+    confirmed_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+    time_series_confirmed = drop_null_vals(pd.read_csv(confirmed_url,error_bad_lines=False))
+    
     assert isinstance(covid_spread_animation(us_time_series_confirmed,"north america",world=False),py.graph_objs._figure.Figure)
+    assert isinstance(covid_spread_animation(time_series_confirmed),py.graph_objs._figure.Figure)
 
     ######################################################################
     # check industry_visualization
