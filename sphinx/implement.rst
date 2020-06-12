@@ -105,7 +105,7 @@ app.py
     :return: Updated prediction figure
     :rtype: plotly.graph_objects.Figure
 
-cal_pval.py
+calculate_pvalue_stocks.py
 ------------------------
 
 This script downloads the data for
@@ -114,7 +114,7 @@ It then calculates the p-value of each stock
 w.r.t. the spread of COVID and stores it
 as a csv in p_val_march.csv
 
-China_industry_data.py
+fetch_china_industry_data.py
 ------------------------
 
 This script downloads all the
